@@ -7,26 +7,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("api/auth")
 public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto){
         String res = authService.register(registerDto);
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
+        System.out.println(loginDto.getUsernameOrEmail());
+        System.out.println(loginDto.getPassword());
         String res = authService.login(loginDto);
-        return new ResponseEntity<>(res,HttpStatus.OK);
+        System.out.println(res);
+        return new ResponseEntity<>(res,HttpStatus.CREATED);
     }
 }

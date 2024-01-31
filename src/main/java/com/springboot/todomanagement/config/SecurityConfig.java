@@ -3,6 +3,7 @@ package com.springboot.todomanagement.config;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -26,6 +27,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                     (auth)->auth
                             .requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults())
