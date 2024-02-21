@@ -1,27 +1,36 @@
 package com.springboot.todomanagement.service.impl;
 
-import com.springboot.todomanagement.controller.ToDoController;
 import com.springboot.todomanagement.dto.ToDoDto;
 import com.springboot.todomanagement.entity.ToDo;
+import com.springboot.todomanagement.entity.User;
 import com.springboot.todomanagement.exception.ResourceNotFoundException;
 import com.springboot.todomanagement.repository.ToDoRepository;
+import com.springboot.todomanagement.repository.UserRepository;
+import com.springboot.todomanagement.security.CustomUser;
 import com.springboot.todomanagement.service.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ToDoServiceImpl implements ToDoService {
     @Autowired
     private ToDoRepository toDoRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Override
-    public ToDoDto createToDo(ToDoDto toDoDto) {
+    public ToDoDto createToDo(ToDoDto toDoDto,Long idUser) {
         ToDo toDo = new ToDo();
         toDo.setTitle(toDoDto.getTitle());
         toDo.setDescription(toDoDto.getDescription());
         toDo.setCompleted(toDoDto.isCompleted());
+
+        User user = userRepository.findById(idUser).orElseThrow(
+                ()->new ResourceNotFoundException("User","Id",String.valueOf(idUser)));
+
+        toDo.setUser(user);
 
         ToDo toDoRes = toDoRepository.save(toDo);
 
@@ -37,8 +46,10 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    public List<ToDoDto> getAllToDo() {
-        List<ToDo> toDoList = toDoRepository.findAll();
+    public List<ToDoDto> getAllToDo(Long idUser) {
+        User user = userRepository.findById(idUser).orElseThrow(
+                ()->new ResourceNotFoundException("User","Id",String.valueOf(idUser)));
+        List<ToDo> toDoList = toDoRepository.findAllByUser(user);
         List<ToDoDto> toDoDtos = toDoList.stream()
                 .map(toDo -> new ToDoDto(toDo.getId(),toDo.getTitle(),toDo.getDescription(),toDo.isCompleted()))
                 .toList();

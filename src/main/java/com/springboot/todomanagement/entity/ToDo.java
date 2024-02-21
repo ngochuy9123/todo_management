@@ -19,4 +19,9 @@ public class ToDo {
     private String title;
     private String description;
     private boolean completed;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user",nullable = false)
+    private User user;
+
 }

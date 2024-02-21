@@ -7,6 +7,7 @@ import com.springboot.todomanagement.entity.User;
 import com.springboot.todomanagement.exception.ToDoApiException;
 import com.springboot.todomanagement.repository.RoleRepository;
 import com.springboot.todomanagement.repository.UserRepository;
+import com.springboot.todomanagement.security.JwtTokenProvider;
 import com.springboot.todomanagement.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,8 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Override
     public String register(RegisterDto registerDto) {
@@ -64,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
                 loginDto.getPassword()
         ));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return "User log in successfully !";
+        String token = jwtTokenProvider.generateToken(authentication);
+        return token;
     }
 }

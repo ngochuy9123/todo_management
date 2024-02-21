@@ -1,10 +1,12 @@
 package com.springboot.todomanagement.controller;
 
 import com.springboot.todomanagement.dto.ToDoDto;
+import com.springboot.todomanagement.security.CustomUser;
 import com.springboot.todomanagement.service.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +21,8 @@ public class ToDoController {
     private ToDoService toDoService;
 
     @PostMapping
-    public ResponseEntity<ToDoDto> createToDo(@RequestBody ToDoDto toDoDto){
-        ToDoDto toDoDtoRes = toDoService.createToDo(toDoDto);
+    public ResponseEntity<ToDoDto> createToDo(@RequestBody ToDoDto toDoDto, @AuthenticationPrincipal CustomUser principal){
+        ToDoDto toDoDtoRes = toDoService.createToDo(toDoDto,principal.getUser().getId());
         return new ResponseEntity<>(toDoDtoRes, HttpStatus.CREATED);
     }
     @GetMapping("{id}")
@@ -29,8 +31,8 @@ public class ToDoController {
         return new ResponseEntity<>(toDoDto,HttpStatus.OK);
     }
     @GetMapping()
-    public ResponseEntity<List<ToDoDto>> getAllToDo(){
-        List<ToDoDto> toDoDtos = toDoService.getAllToDo();
+    public ResponseEntity<List<ToDoDto>> getAllToDo(@AuthenticationPrincipal CustomUser principal){
+        List<ToDoDto> toDoDtos = toDoService.getAllToDo(principal.getUser().getId());
         return new ResponseEntity<>(toDoDtos,HttpStatus.OK);
     }
     @PutMapping("{id}")
